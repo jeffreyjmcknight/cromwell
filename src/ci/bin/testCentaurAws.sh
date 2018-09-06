@@ -22,7 +22,7 @@ export AWS_CONFIG_FILE="${CROMWELL_BUILD_RESOURCES_DIRECTORY}"/aws_config
 # pass integration directory to the inputs json otherwise remove it from the inputs file
 INTEGRATION_TESTS=()
 if [ "${CROMWELL_BUILD_IS_CRON}" = "true" ]; then
-    INTEGRATION_TESTS=(-i "${CROMWELL_BUILD_CENTAUR_INTEGRATION_TESTS}")
+    INTEGRATION_TESTS=(-d "${CROMWELL_BUILD_CENTAUR_INTEGRATION_TESTS}")
     # Increase concurrent job limit to get tests to finish under three hours.
     # Increase read_lines limit because of read_lines call on hg38.even.handcurated.20k.intervals.
     CENTAUR_READ_LINES_LIMIT=512000
@@ -39,7 +39,7 @@ centaur/test_cromwell.sh \
     -c "${CROMWELL_BUILD_RESOURCES_DIRECTORY}/aws_application.conf" \
     -n "${CROMWELL_BUILD_RESOURCES_DIRECTORY}/centaur_application.conf" \
     -g \
-    -e localdockertest \
+    -i singlesample_aws \
     "${INTEGRATION_TESTS[@]}"
 
 cromwell::build::generate_code_coverage
