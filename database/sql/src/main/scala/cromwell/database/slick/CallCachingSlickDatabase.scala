@@ -80,7 +80,8 @@ trait CallCachingSlickDatabase extends CallCachingSqlDatabase {
             two.prefix, two.length,
             three.prefix, three.length)).result
     }
-    runTransaction(action)
+    System.err.println(s"Query is: ${action.statements.head}")
+    runTransaction(action) map { b => System.err.println(s"Exists base aggregation for prefixes? $b"); b }
   }
 
   override def findCacheHitForAggregation(baseAggregationHash: String, inputFilesAggregationHash: Option[String], hitNumber: Int)
