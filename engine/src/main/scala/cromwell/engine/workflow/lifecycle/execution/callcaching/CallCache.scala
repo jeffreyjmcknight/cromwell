@@ -1,6 +1,7 @@
 package cromwell.engine.workflow.lifecycle.execution.callcaching
 
 import cats.data.NonEmptyList
+import common.util.StringUtil._
 import cromwell.backend.BackendJobDescriptorKey
 import cromwell.backend.BackendJobExecutionActor.{CallCached, JobFailedNonRetryableResponse, JobSucceededResponse}
 import cromwell.core.ExecutionIndex.{ExecutionIndex, IndexEnhancedIndex}
@@ -174,6 +175,6 @@ object CallCache {
 
   sealed trait CacheHitHint
   case class CallCachePathPrefixes(callCacheRootPrefix: Option[String], workflowOptionPrefixes: List[String]) extends CacheHitHint {
-    def prefixes: List[String] = callCacheRootPrefix.toList ++ workflowOptionPrefixes
+    lazy val prefixes: List[String] = (callCacheRootPrefix.toList ++ workflowOptionPrefixes) map { _.ensureSlashed }
   }
 }

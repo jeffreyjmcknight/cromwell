@@ -71,6 +71,9 @@ trait CallCachingSlickDatabase extends CallCachingSqlDatabase {
         val total = ps.lift
         // Take the first three prefixes that have been supplied or fallback values that will intentionally fail to match anything.
         val one :: two :: three :: _ = (0 to 2).toList map { total(_) map { p => PrefixAndLength(p, p.length) } getOrElse doNotMatch }
+        System.err.println(s"one prefix=${one.prefix} length=${one.length}")
+        System.err.println(s"two prefix=${two.prefix} length=${two.length}")
+        System.err.println(s"three prefix=${three.prefix} length=${three.length}")
         dataAccess.existsCallCachingEntriesForBaseAggregationHashWithCallCachePrefix(
           (baseAggregationHash,
             one.prefix, one.length,
