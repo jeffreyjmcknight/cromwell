@@ -80,4 +80,26 @@ trait CallCachingAggregationEntryComponent {
         (callCachingAggregationEntry.inputFilesAggregation === inputFilesAggregation)
     } yield callCachingAggregationEntry.callCachingEntryId).drop(number - 1).take(1)
   }
+
+  def callCachingEntriesForAggregatedHashesWithPrefixes(baseAggregation: Rep[String], inputFilesAggregation: Rep[Option[String]],
+                                                        prefix1: Rep[String], prefix1Length: Rep[Int],
+                                                        prefix2: Rep[String], prefix2Length: Rep[Int],
+                                                        prefix3: Rep[String], prefix3Length: Rep[Int],
+                                                        number: Int) = {
+    (for {
+      callCachingEntry <- callCachingEntries
+      if callCachingEntry.allowResultReuse
+      callCachingAggregationEntry <- callCachingAggregationEntries
+      if callCachingEntry.callCachingEntryId === callCachingAggregationEntry.callCachingEntryId
+      if callCachingAggregationEntry.baseAggregation === baseAggregation
+      if (callCachingAggregationEntry.inputFilesAggregation.isEmpty && inputFilesAggregation.isEmpty) ||
+        (callCachingAggregationEntry.inputFilesAggregation === inputFilesAggregation)
+      detritus <- callCachingDetritusEntries
+      if detritus.callCachingEntryId === callCachingEntry.callCachingEntryId
+      detritusPath = detritus.detritusValue.map { x => x.asColumnOf[String] }
+      if (detritusPath.substring(0, prefix1Length) === prefix1) ||
+        (detritusPath.substring(0, prefix2Length) === prefix2) ||
+        (detritusPath.substring(0, prefix3Length) === prefix3)
+    } yield callCachingAggregationEntry.callCachingEntryId).drop(number - 1).take(1)
+  }
 }
