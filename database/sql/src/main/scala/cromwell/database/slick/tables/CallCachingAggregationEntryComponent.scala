@@ -95,6 +95,9 @@ trait CallCachingAggregationEntryComponent {
       if (callCachingAggregationEntry.inputFilesAggregation.isEmpty && inputFilesAggregation.isEmpty) ||
         (callCachingAggregationEntry.inputFilesAggregation === inputFilesAggregation)
       detritus <- callCachingDetritusEntries
+      // Pick only one detritus file since this is not an existence check and we don't want to return one row
+      // for each of the (currently 6) types of standard detritus.
+      if detritus.detritusKey === "returnCode"
       if detritus.callCachingEntryId === callCachingEntry.callCachingEntryId
       detritusPath = detritus.detritusValue.map { x => x.asColumnOf[String] }
       if (detritusPath.substring(0, prefix1Length) === prefix1) ||
